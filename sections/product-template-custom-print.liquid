@@ -14,7 +14,6 @@
   <div class="grid product-single">
 
     <div class="grid__item medium-up--one-half">
-      hhhhhhh
       {% for image in product.images %}
         {% capture img_id %}ProductImage-{{ image.id }}{% endcapture %}
         {% capture wrapper_id %}ProductImageWrapper-{{ image.id }}{% endcapture %}
@@ -137,7 +136,48 @@
                 <input type="number" id="Quantity" name="quantity" value="1" min="1">
               </div>
             {% endif %}
-
+            {% if settings.custom_print != blank or settings.custom_print_opt != blank %}
+              <fieldset>
+                <legend>{{ settings.custom_print_title }}</legend>
+                {% if settings.custom_print != blank %}
+                  <div class="product-single__custom-print">
+                    <label for="Custom-print">{{ settings.custom_print | capitalize }}</label>
+                    <input type="text" id="custom-print" name="properties[{{settings.custom_print}}]" required class="required">
+                  </div>
+                  <script type="text/javascript">
+                    $(function() {
+                      $(window.theme).ready(function(){
+                        var $submit = $('#AddToCart');
+                        var $required = $('#custom-print');
+                        var $error = $('#custom-print-error');
+                        function checkInput(el) {
+                          if ($(el).val() === '') {
+                            $submit.attr('disabled', true);
+                            $error.show();
+                          } else {
+                            $submit.attr('disabled', false);
+                            $error.hide();
+                          }
+                        };
+                        checkInput($required);
+                        $required.on('keyup', function(){
+                          checkInput(this);
+                        });
+                      });
+                    });
+                  </script>
+                {% endif %}
+                {% if settings.custom_print_opt != blank %}
+                  <div class="product-single__custom-print-optional">
+                    <label for="Custom-print-optional">{{ settings.custom_print_opt | capitalize }}</label>
+                    <input type="text" id="custom-print-optional" name="properties[{{settings.custom_print_opt}}]">
+                  </div>
+                {% endif %}
+              </fieldset>
+            {% endif %}
+            {%  if settings.custom_print != blank %}
+              <i id="custom-print-error" class="errors">{{settings.custom_print}} is required</i>
+            {% endif %}
             <div class="product-single__cart-submit-wrapper{% if section.settings.enable_payment_button %} product-single__shopify-payment-btn{% endif %}{% if section.settings.add_to_cart_width == 'full_width' %} product-form--full{% endif %}">
               <button type="submit" name="add" id="AddToCart"class="btn product-single__cart-submit{% if section.settings.add_to_cart_width == 'full_width' %} btn--full{% endif %}{% if section.settings.enable_payment_button %} shopify-payment-btn btn--secondary{% endif %}">
                 <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
