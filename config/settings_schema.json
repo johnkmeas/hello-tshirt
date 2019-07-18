@@ -1558,5 +1558,35 @@
         }
       }
     ]
+  },
+  {
+    "name": {
+      "en": "Custom T-Shirt Prints"
+    },
+    "settings": [
+      {
+        "type": "text",
+        "id": "custom_print_title",
+        "label": {
+          "en": "Custom Print Fieldset Title"
+        }
+      },
+      {
+        "type": "text",
+        "id": "custom_print",
+        "label": {
+          "en": "Primary Print"
+        },
+        "info": "Required custom print"
+      },
+      {
+        "type": "text",
+        "id": "custom_print_opt",
+        "label": {
+          "en": "Secondary Print"
+        },
+        "info": "Optional custom print"
+      }
+    ]
   }
 ]
