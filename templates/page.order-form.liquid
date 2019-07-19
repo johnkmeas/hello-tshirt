@@ -1,0 +1,197 @@
+{% comment %}
+Source: https://gist.github.com/carolineschnapp/9122054
+If you are not on a collection page, do define which collection to use in the order form.
+Use the following assign statement, replace 'your-collection-handle-here' with your collection handle.
+{% assign collection = collections.your-collection-handle-here %}
+Use the assign statement outside of this comment block at the top of your template.
+{% endcomment %}
+
+{% assign collection = collections.fresh-gear %}
+
+{% paginate collection.products by 100 %}
+
+<form action="/cart" method="post">
+  
+  {% if collection.products_count > 0 %}
+    <div>
+      <h1>{% if template contains 'page' %}{{ page.title }}{% else %}{{ collection.title }}{% endif %}</h1>
+      <input type="submit" value="Add to the cart" />
+    </div>
+  {% else %}
+    <h1>{% if template contains 'page' %}{{ page.title }}{% else %}{{ collection.title }}{% endif %}</h1>
+  {% endif %}
+
+  {% if template contains 'page' and page.content.size > 0 %}
+    <div class="rte">
+      {{ page.content }}
+    </div>  
+  {% elsif collection.description.size > 0 %}
+    <div class="rte">
+      {{ collection.description }}
+    </div>
+  {% endif %}
+
+  {% if collection.products_count > 0 %}
+
+    <table>
+      <tbody>
+      {% for product in collection.products %}
+        {% if product.available %}
+          {% form 'product', product, class:'product-form' %}
+            <tr class="{% cycle 'pure-table-odd', '' %}" data="product" data-line-item="{{ forloop.index }}">
+              <td>
+                <a href="{{ product.url | collection }}">
+                  <img src="{{ product.image | default: product.featured_image | img_url: 'small' }}" alt="{{ variant.title | escape }}" />
+                </a>
+              </td>
+              <td>
+                  {{ line_item.key }}
+                <a href="{{ product.url | collection }}">
+                  {{ product.title }} - {{ product.sku }}
+                </a>
+              </td>
+              <td>
+                <select name="variant" id="product-variant-{{ forloop.index }}">
+                  {% for variant in product.variants %}
+                  {% if variant.available %}
+                    <option 
+
+                        data-sku="{{ variant.sku }}" 
+                        value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}
+                    
+                    </option>
+                  {% else %}
+                    <option disabled="disabled">
+                      {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                    </option>
+                  {% endif %}
+                  {% endfor %}
+                </select>
+              </td>
+              <td style="text-align:right;">
+                <input name="quantity" class="quantity field" min="0" type="text" value="0" tabindex="1" />
+              </td>
+              <td>
+                {% for tag in product.tags %}
+                  {% if tag contains 'shirt' %}
+                    {% if settings.custom_print != blank or settings.custom_print_opt != blank %}
+
+                      <legend>{{ settings.custom_print_title }}</legend>
+                      {% if settings.custom_print != blank %}
+                        <div class="product-single__custom-print">
+                          <label for="Custom-print">{{ settings.custom_print | capitalize }}</label>
+                          <input type="text" id="custom-print" name="{{ settings.custom_print | camelcase}}" required class="required">
+                        </div>
+                        <script type="text/javascript">
+                          $(function() {
+                            $(window.theme).ready(function(){
+                              var $submit = $('#AddToCart');
+                              var $required = $('#custom-print');
+                              var $error = $('#custom-print-error');
+                              function checkInput(el) {
+                                if ($(el).val() === '') {
+                                  $submit.attr('disabled', true);
+                                  $error.show();
+                                } else {
+                                  $submit.attr('disabled', false);
+                                  $error.hide();
+                                }
+                              };
+                              checkInput($required);
+                              $required.on('keyup', function(){
+                                checkInput(this);
+                              });
+                            });
+                          });
+                        </script>
+                      {% endif %}
+                      {% if settings.custom_print_opt != blank %}
+                        <div class="product-single__custom-print-optional">
+                          <label for="Custom-print-optional">{{ settings.custom_print_opt | capitalize }}</label>
+                          <input type="text" id="custom-print-optional" name="{{settings.custom_print_opt | camelcase}}">
+                        </div>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %} <!-- end if tag-->
+                {% endfor %}
+                {% if settings.custom_print_opt != blank %}
+                  <div class="product-single__custom-print-global">
+                    <label for="Custom-print-global">{{ settings.custom_print_global | capitalize }}</label>
+                    <input type="text" id="custom-print-global" name="{{settings.custom_print_global | camelcase}}">
+                  </div>
+                {% endif %}
+                
+                </td>
+              </tr>
+              {% endform %}
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+          
+    <div>
+      <button id="order">Order</button>
+      <input type="submit" value="Add to the cart" />
+    </div>
+  
+  {% else %}
+    <p>There are no products in this view.</p>
+  {% endif %}
+
+</form>
+
+{% endpaginate %}
+
+{% if collection.products_count > 0 %}
+<script>
+jQuery(function($) {
+  var obj = [];
+   console.log('obj', obj);
+
+  var $selected, $lineItem;
+
+  $('input[name]').on('keyup', function() {
+      $selected = $(this).val();
+      $lineItem = getLineItem(this);
+      updateLineItem($lineItem, $(this).attr('name'), $selected);
+      console.log('obj', obj);
+  })
+
+  $('select[name="variant"]').on('change', function() {
+    $selected =  $(this).children("option:selected").val();
+    $lineItem = getLineItem(this);
+    updateLineItem($lineItem, $(this).attr('name'), $selected);
+
+    console.log('obj', obj);
+  })
+
+  function getLineItem(el) {
+    console.log('el', el)
+    return $(el).closest('[data="product"]').attr('data-line-item');
+  }
+
+  function updateLineItem(line, key, value){
+    if(obj[line - 1] !== undefined ) {
+      Object.assign(obj[line - 1], {[key]: value});
+    } else {
+      obj[line - 1] = {};
+      Object.assign(obj[line - 1], {[key]: value});
+    }
+  }
+
+
+
+  // $('#order').on('click', function(){
+  // var val = obj[0];
+  //   jQuery.post('/cart/add.js', {
+  //     quantity: val.quantity,
+  //     id: val.variant,
+  //     properties: {
+  //       'First name': 'Caroline'
+  //     }
+  //   });
+  // })
+
+});
+</script>
+{% endif %}
