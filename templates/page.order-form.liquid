@@ -10,7 +10,7 @@ Use the assign statement outside of this comment block at the top of your templa
 
 {% paginate collection.products by 100 %}
 
-<form action="/cart" method="post">
+<form class="order-form" action="/cart" method="post">
   
   {% if collection.products_count > 0 %}
     <div>
@@ -115,7 +115,7 @@ Use the assign statement outside of this comment block at the top of your templa
                     <button data-add-item>Add</button>
                   </label>
                 </td>
-                <td style="width: 30%">
+                <td>
                   <div data-bind="current-cart"></div>
                 </td>
               </tr>
@@ -171,9 +171,39 @@ Use the assign statement outside of this comment block at the top of your templa
     padding-top: 25px;
   }
 
+  .button-group button {
+    margin: 4px 0;
+  }
+
   .product-title {
     display: block;
     text-align: center;
+  }
+
+  @media (max-width: 639px) {
+    th {
+      display: none;
+    }
+
+    td {
+      display: block;
+    }
+
+    select[name="variant"] {
+      display: block;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .order-form {
+      overflow: scroll;
+    }
   }
 
 </style>
