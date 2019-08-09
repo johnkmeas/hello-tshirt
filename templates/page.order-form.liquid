@@ -1,0 +1,401 @@
+{% comment %}
+Source: https://gist.github.com/carolineschnapp/9122054
+If you are not on a collection page, do define which collection to use in the order form.
+Use the following assign statement, replace 'your-collection-handle-here' with your collection handle.
+{% assign collection = collections.your-collection-handle-here %}
+Use the assign statement outside of this comment block at the top of your template.
+{% endcomment %}
+
+{% assign collection = collections.fresh-gear %}
+
+{% paginate collection.products by 100 %}
+
+<form class="order-form" action="/cart" method="post">
+  
+  {% if collection.products_count > 0 %}
+    <div>
+      <h1>{% if template contains 'page' %}{{ page.title }}{% else %}{{ collection.title }}{% endif %}</h1>
+    </div>
+  {% else %}
+    <h1>{% if template contains 'page' %}{{ page.title }}{% else %}{{ collection.title }}{% endif %}</h1>
+  {% endif %}
+  <h2>
+    {{ collection.title }}
+  </h2>
+  {% if template contains 'page' and collection.description.size > 0 %}
+    <div class="rte">
+      {{ collection.description }}
+    </div>
+  {% endif %}
+
+  {% if collection.products_count > 0 %}
+    <table>
+      <thead>
+        <th>
+          <b>Product</b>
+        </th>
+        <th>
+          <b>Selection</b>
+        </th>
+        <th>
+          <b>Custom Printing</b>
+        </th>
+        <th>
+          <b>Add Item</b>
+        </th>
+        <th>
+          <b>Summary</b>
+        </th>
+      </thead>
+      <tbody>
+        {% for product in collection.products %}
+          {% if product.available %}
+            {% form 'product', product, class:'product-form' %}
+              <tr class="{% cycle 'pure-table-odd', '' %}" data="product" data-product-id="{{ product.id }}" data-line-item="{{ forloop.index }}">
+                <td>
+                  {{ line_item.key }}
+                  <a class="product-title" href="{{ product.url | collection }}">
+                    {{ product.title }}
+                  </a>
+                  <a href="{{ product.url | collection }}">
+                    <img src="{{ product.image | default: product.featured_image | img_url: 'small' }}" alt="{{ variant.title | escape }}" />
+                  </a>   
+                </td>
+                <td>
+                  <label for="variant">Variant
+                    <select name="variant" id="product-variant-{{ forloop.index }}">
+                      <option value="" disabled selected>Select your option</option>
+                      {% for variant in product.variants %}
+                      {% if variant.available %}
+                        <option 
+                            data-sku="{{ variant.sku }}" 
+                            value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}
+                        </option>
+                      {% else %}
+                        <option disabled="disabled">
+                          {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                        </option>
+                      {% endif %}
+                      {% endfor %}
+                    </select>
+                  </label>
+                </td>
+                <td>
+                  {% for tag in product.tags %}
+                    {% if tag contains 'shirt' %}
+                      {% if settings.custom_print != blank or settings.custom_print_opt != blank %}
+                        {% if settings.custom_print != blank %}
+                          <div class="product-single__custom-print">
+                            <label for="Custom-print">{{ settings.custom_print | capitalize }}
+                              <input type="text" id="custom-print" name="{{ settings.custom_print | camelcase}}">
+                            </label>
+                          </div>
+                        {% endif %}
+                        {% if settings.custom_print_opt != blank %}
+                          <div class="product-single__custom-print-optional">
+                            <label for="Custom-print-optional">{{ settings.custom_print_opt | capitalize }}
+                              <input type="text" id="custom-print-optional" name="{{settings.custom_print_opt | camelcase}}">
+                            </label>
+                          </div>
+                        {% endif %}
+                      {% endif %}
+                    {% endif %} <!-- end if tag-->
+                  {% endfor %}
+                  {% if settings.custom_print_opt != blank %}
+                    <div class="product-single__custom-print-global">
+                      <label for="Custom-print-global">{{ settings.custom_print_global | capitalize }}
+                        <input type="text" id="custom-print-global" name="{{settings.custom_print_global | camelcase}}">
+                      </label>
+                    </div>
+                  {% endif %}
+                </td>
+                <td>
+                  <label for="quantity">Quantity
+                    <input name="quantity" class="quantity field" min="0" type="text" value="0" tabindex="1" />
+                    <button data-add-item>Add</button>
+                  </label>
+                </td>
+                <td>
+                  <div data-bind="current-cart"></div>
+                </td>
+              </tr>
+            {% endform %}
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>    
+    <div class="button-group">
+      <div class="errors display-none" data-bind-msg></div>
+      <button type="submit" name="checkout" value="ORDER">ORDER NOW</button>
+      <button data-clear-cart>CLEAR ORDER</button>
+    </div>
+  {% else %}
+    <p>There are no products in this view.</p>
+  {% endif %}
+</form>
+
+{% endpaginate %}
+
+<!-- A few style tweaks to improve user experience -->
+<style>
+
+  label {
+    display: block;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid #d1cfcf;
+    margin-bottom: 5px;
+  }
+
+  button {
+    background-color: #eb9f40;
+    border: none;
+    color:white;
+    border-radius: 0;
+    max-width: 100%;
+    padding: 8px 24px;
+  }
+
+  button:hover {
+    background: #45bdeb;
+  }
+
+  .display-none {
+    display: none;
+  }
+  
+  .button-group {
+    padding-top: 25px;
+  }
+
+  .button-group button {
+    margin: 4px 0;
+  }
+
+  .product-title {
+    display: block;
+    text-align: center;
+  }
+
+  @media (max-width: 639px) {
+    th {
+      display: none;
+    }
+
+    td {
+      display: block;
+    }
+
+    select[name="variant"] {
+      display: block;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .order-form {
+      overflow: scroll;
+    }
+  }
+
+</style>
+
+{% if collection.products_count > 0 %}
+  <script>
+    jQuery(function($) {
+      var obj = [];
+      var $selected, $lineItem;
+
+      /* 
+      ** Begin event handlers
+      */
+      $('input[name]').on('keyup', function() {
+        $selected = $(this).val();
+        $lineItem = getLineItem(this);
+        updateLineItem($lineItem, $(this).attr('name'), $selected);
+      })
+
+      $('select[name="variant"]').on('change', function() {
+        $selected =  $(this).children("option:selected").val();
+        $lineItem = getLineItem(this);
+        updateLineItem($lineItem, $(this).attr('name'), $selected);
+      })
+
+      $('[data-add-item]').on('click', function(e){
+        e.preventDefault();
+        $selected = $(this).closest('[data="product"]');
+        var line = $selected.attr('data-line-item');
+        var productID = $selected.attr('data-product-id');
+        var objIndex = obj[line - 1];
+        var properties = {};
+
+        if(objIndex !== undefined ) {
+          if(objIndex.variant !== undefined && objIndex.quantity !== undefined){
+            var entries = Object.entries(objIndex)
+            for(var item of entries){
+              if(!(item[0] === 'variant' || item[0] === 'quantity')) {
+                properties[item[0]] = item[1]
+              }
+            }
+            push_to_queue(objIndex.variant, objIndex.quantity, properties, productID, Shopify.moveAlong);
+            $(this).closest('td').find('div.errors').remove();
+          } else {
+            $(this).closest('td').find('div.errors').remove();
+            $(this).closest('td').append('<div class="errors">missing parameter</div>');
+          }
+        }
+      });
+
+      $('[data-clear-cart]').on('click', function(e){
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '/cart/clear.js',
+          dataType: 'json',
+          success: function(res){
+            updateSummary(res.items);
+          }
+        });
+      });
+      /* 
+      ** End event handlers
+      */
+      
+      /* 
+      ** Start Utility
+      */
+      function getCart() {
+        $.ajax({
+          type: 'GET',
+          url: '/cart.js',
+          dataType: 'json',
+          success: function(res){
+            updateSummary(res.items);
+          }
+        });
+      }
+      getCart();
+
+      function getLineItem(el) {
+        return $(el).closest('[data="product"]').attr('data-line-item');
+      }
+
+      function updateLineItem(line, key, value){
+        if(obj[line - 1] !== undefined ) {
+          Object.assign(obj[line - 1], {[key]: value});
+        } else {
+          obj[line - 1] = {};
+          Object.assign(obj[line - 1], {[key]: value});
+        }
+      }
+
+
+      function updateSummary(products) {
+        $('[data-bind="current-cart"]').html('');
+        var contextCost, contextQty, displayCell, data;
+
+        $.each(products, function(i, val){
+          displayCell = $('[data-product-id="'+ val.product_id +'"]').find('[data-bind="current-cart"]');
+          if(displayCell.html() === '') {
+            contextCost = val.line_price / 100;
+            contextQty = val.quantity;
+            contextCost.toLocaleString("en-US", {style:"currency", currency:"CAD"});
+          } else {
+            contextQty = displayCell.find('[data-qty]').data('qty');
+            contextCost = displayCell.find('[data-cost]').data('cost');
+            contextCost = (val.line_price / 100) + contextCost;
+            contextQty = val.quantity + contextQty;
+          }
+          data = `<ul">
+                    <li data-qty="${contextQty}">quantity: ${contextQty}</li>
+                    <li data-cost="${contextCost}">cost: $${contextCost}</li>
+                  </ul>`;
+          
+          $(displayCell).html(data);
+        });
+      }
+
+      function displayMsg(res){
+        if(res.status === 422) {
+          $('[data-bind-msg]').html(res.description);
+          $('[data-bind-msg]').show();
+        } else {
+          $('[data-bind-msg]').html('');
+          $('[data-bind-msg]').hide();
+        }
+      }
+
+      /*
+      ** Begin Shopify ajax
+      */
+      Shopify.queue = [];
+      Shopify.moveAlong = function() {
+        if (Shopify.queue.length) {
+          var req = Shopify.queue.shift();
+          Shopify.addItem(req.variantId, 
+                          req.quantity, 
+                          req.properties, 
+                          req.productID, 
+                          Shopify.moveAlong);
+        }
+      };
+
+      Shopify.addItem = function( id, 
+                                  qty, 
+                                  properties, 
+                                  productID, 
+                                  callback) {
+        var params = {
+          quantity: qty,
+          id: id
+        };
+
+        var proID = productID;
+        if(properties !== false){
+          params.properties = properties;
+        };
+
+        $.ajax({
+          type: 'POST',
+          url: '/cart/add.js',
+          dataType: 'json',
+          data: params,
+          success: function(res){
+            getCart();
+            if(typeof callback === 'function'){
+              callback();
+            }
+            displayMsg(res);
+          },
+          error: function(err){
+            displayMsg(err.responseJSON);
+          }
+        });
+      }
+
+      function push_to_queue(variantID, quantity, properties, productID, callback) {
+        Shopify.queue.push({
+          variantId: variantID,
+          quantity: quantity,
+          properties: properties,
+          productID: productID
+        });
+        if(typeof callback === 'function'){
+              callback();
+        }
+      }
+      /*
+      ** End Shopify ajax
+      */
+
+    });
+  </script>
+{% endif %}

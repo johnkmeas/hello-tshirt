@@ -1588,5 +1588,20 @@
         "info": "Optional custom print"
       }
     ]
+  },
+  {
+    "name": {
+      "en": "Custom Global Print"
+    },
+    "settings": [
+      {
+        "type": "text",
+        "id": "custom_print_global",
+        "label": {
+          "en": "Custom Global Print"
+        },
+        "info": "Prints for all products"
+      }
+    ]
   }
 ]
