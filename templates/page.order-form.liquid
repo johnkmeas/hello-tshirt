@@ -136,7 +136,7 @@ Use the assign statement outside of this comment block at the top of your templa
 
 {% endpaginate %}
 
-<!-- A few style tweaks to help with user experience -->
+<!-- A few style tweaks to improve user experience -->
 <style>
 
   label {
@@ -184,6 +184,9 @@ Use the assign statement outside of this comment block at the top of your templa
       var obj = [];
       var $selected, $lineItem;
 
+      /* 
+      ** Begin event handlers
+      */
       $('input[name]').on('keyup', function() {
         $selected = $(this).val();
         $lineItem = getLineItem(this);
@@ -198,8 +201,9 @@ Use the assign statement outside of this comment block at the top of your templa
 
       $('[data-add-item]').on('click', function(e){
         e.preventDefault();
-        var line = $(this).closest('[data="product"]').attr('data-line-item');
-        var productID = $(this).closest('[data="product"]').attr('data-product-id');
+        $selected = $(this).closest('[data="product"]');
+        var line = $selected.attr('data-line-item');
+        var productID = $selected.attr('data-product-id');
         var objIndex = obj[line - 1];
         var properties = {};
 
@@ -214,10 +218,41 @@ Use the assign statement outside of this comment block at the top of your templa
             push_to_queue(objIndex.variant, objIndex.quantity, properties, productID, Shopify.moveAlong);
             $(this).closest('td').find('div.errors').remove();
           } else {
+            $(this).closest('td').find('div.errors').remove();
             $(this).closest('td').append('<div class="errors">missing parameter</div>');
           }
         }
       });
+
+      $('[data-clear-cart]').on('click', function(e){
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '/cart/clear.js',
+          dataType: 'json',
+          success: function(res){
+            updateSummary(res.items);
+          }
+        });
+      });
+      /* 
+      ** End event handlers
+      */
+      
+      /* 
+      ** Start Utility
+      */
+      function getCart() {
+        $.ajax({
+          type: 'GET',
+          url: '/cart.js',
+          dataType: 'json',
+          success: function(res){
+            updateSummary(res.items);
+          }
+        });
+      }
+      getCart();
 
       function getLineItem(el) {
         return $(el).closest('[data="product"]').attr('data-line-item');
@@ -232,31 +267,8 @@ Use the assign statement outside of this comment block at the top of your templa
         }
       }
 
-      function getCart() {
-        $.ajax({
-          type: 'GET',
-          url: '/cart.js',
-          dataType: 'json',
-          success: function(res){
-            showRes(res.items);
-          }
-        });
-      }
-      getCart();
 
-      $('[data-clear-cart]').on('click', function(e){
-        e.preventDefault();
-        $.ajax({
-          type: 'POST',
-          url: '/cart/clear.js',
-          dataType: 'json',
-          success: function(res){
-            showRes(res.items);
-          }
-        });
-      });
-
-      function showRes(products) {
+      function updateSummary(products) {
         $('[data-bind="current-cart"]').html('');
         var contextCost, contextQty, displayCell, data;
 
@@ -267,10 +279,8 @@ Use the assign statement outside of this comment block at the top of your templa
             contextQty = val.quantity;
             contextCost.toLocaleString("en-US", {style:"currency", currency:"CAD"});
           } else {
-            console.log('dCell', displayCell.html());
             contextQty = displayCell.find('[data-qty]').data('qty');
             contextCost = displayCell.find('[data-cost]').data('cost');
-            console.log('contextCost',contextCost);
             contextCost = (val.line_price / 100) + contextCost;
             contextQty = val.quantity + contextQty;
           }
@@ -293,23 +303,33 @@ Use the assign statement outside of this comment block at the top of your templa
         }
       }
 
-      // Shopify ajax
+      /*
+      ** Begin Shopify ajax
+      */
       Shopify.queue = [];
       Shopify.moveAlong = function() {
         if (Shopify.queue.length) {
-          var request = Shopify.queue.shift();
-          Shopify.addItem(request.variantId, request.quantity, request.properties, request.productID, Shopify.moveAlong);
+          var req = Shopify.queue.shift();
+          Shopify.addItem(req.variantId, 
+                          req.quantity, 
+                          req.properties, 
+                          req.productID, 
+                          Shopify.moveAlong);
         }
       };
 
-      Shopify.addItem = function(id, qty, properties, productID, callback) {
+      Shopify.addItem = function( id, 
+                                  qty, 
+                                  properties, 
+                                  productID, 
+                                  callback) {
         var params = {
           quantity: qty,
           id: id
         };
 
         var proID = productID;
-        if(properties != false){
+        if(properties !== false){
           params.properties = properties;
         };
 
@@ -330,6 +350,7 @@ Use the assign statement outside of this comment block at the top of your templa
           }
         });
       }
+
       function push_to_queue(variantID, quantity, properties, productID, callback) {
         Shopify.queue.push({
           variantId: variantID,
@@ -341,6 +362,10 @@ Use the assign statement outside of this comment block at the top of your templa
               callback();
         }
       }
+      /*
+      ** End Shopify ajax
+      */
+
     });
   </script>
 {% endif %}
