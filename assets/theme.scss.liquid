@@ -5095,3 +5095,70 @@ button {
   }
 }
 
+// custom styles
+label {
+  display: block;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid #d1cfcf;
+  margin-bottom: 5px;
+}
+
+button {
+  background-color: #eb9f40;
+  border: none;
+  color:white;
+  border-radius: 0;
+  max-width: 100%;
+  padding: 8px 24px;
+}
+
+button:hover {
+  background: #45bdeb;
+}
+
+.display-none {
+  display: none;
+}
+
+.button-group {
+  padding-top: 25px;
+}
+
+.button-group button {
+  margin: 4px 0;
+}
+
+.product-title {
+  display: block;
+  text-align: center;
+}
+
+@media (max-width: 639px) {
+  th {
+    display: none;
+  }
+
+  td {
+    display: block;
+  }
+
+  select[name="variant"] {
+    display: block;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+  }
+}
+
+@media (min-width: 640px) {
+  .order-form {
+    overflow: scroll;
+  }
+}

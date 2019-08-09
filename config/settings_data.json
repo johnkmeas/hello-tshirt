@@ -1,35 +1,73 @@
 {
   "current": {
-    "color_body_bg": "#ffffff",
-    "color_body_text": "#333333",
-    "color_primary_color": "#333333",
+    "color_body_bg": "#fafafa",
+    "color_body_text": "#505051",
+    "color_primary_color": "#df8200",
     "color_primary_button_text": "#ffffff",
     "color_sale_badge": "#c8493f",
     "color_borders": "#e8e8e8",
     "color_form": "#f4f4f4",
     "color_image_overlay_text": "#fff",
-    "color_image_overlay": "#333333",
-    "image_overlay_opacity": "25",
-    "type_header_font": "times_new_roman_n4",
-    "type_header_base_size": "28px",
-    "type_base_font": "helvetica_n4",
-    "type_base_size": "15px",
-    "type_button_base_size": "14px",
-    "type_navigation_base_size": "16px",
+    "color_image_overlay": "#b8b8b8",
+    "image_overlay_opacity": 41,
+    "type_header_font": "roboto_n9",
+    "type_header_base_size": "30px",
+    "type_base_font": "roboto_n4",
+    "type_base_size": "18px",
+    "type_button_base_size": "16px",
+    "type_navigation_base_size": "18px",
+    "cart_enable_ajax": true,
     "show_breadcrumb_nav": true,
+    "share_image": "",
+    "social_facebook_link": "",
+    "social_twitter_link": "",
+    "social_pinterest_link": "",
+    "social_instagram_link": "",
+    "social_snapchat_link": "",
+    "social_google_plus_link": "",
+    "social_tumblr_link": "",
+    "social_youtube_link": "",
+    "social_vimeo_link": "",
+    "social_fancy_link": "",
+    "main_blog": "",
     "share_facebook": true,
     "share_twitter": true,
     "share_pinterest": true,
+    "favicon": "",
+    "custom_print_title": "Custom Printing",
+    "custom_print": "Front chest text",
+    "custom_print_opt": "Nape of neck text",
+    "custom_print_global": "Label Prints",
+    "checkout_header_image": "",
+    "checkout_logo_image": "",
+    "checkout_logo_position": "left",
+    "checkout_logo_size": "medium",
+    "checkout_body_background_image": "",
+    "checkout_body_background_color": "#fff",
+    "checkout_input_background_color_mode": "white",
+    "checkout_sidebar_background_image": "",
+    "checkout_sidebar_background_color": "#fafafa",
+    "checkout_heading_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    "checkout_body_font": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    "checkout_accent_color": "#197bbd",
+    "checkout_button_color": "#197bbd",
+    "checkout_error_color": "#e32c2b",
     "sections": {
       "featured-products": {
         "type": "featured-products",
         "settings": {
-          "home_page_featured_products": "frontpage"
+          "title": "Featured collection",
+          "home_page_featured_products": "fresh-gear",
+          "home_featured_products_row_num": 2
         }
       },
       "featured-content": {
         "type": "featured-content",
-        "settings": {}
+        "settings": {
+          "section_title": "Basic Tees and Fresh Combos",
+          "text": "<p><strong>Discover our premium basic tees&nbsp;with custom printed message<\/strong>.<\/p>\n<p>Check out our Fresh Gear combo&nbsp;and get free custom printing on each product.<\/p>",
+          "text_size": "large"
+        }
       },
       "footer": {
         "type": "footer",
@@ -37,6 +75,7 @@
           "footer-0": {
             "type": "menu",
             "settings": {
+              "title": "Links",
               "menu": "footer"
             }
           }
@@ -44,7 +83,63 @@
         "block_order": [
           "footer-0"
         ],
-        "settings": {}
+        "settings": {
+          "show_payment_icons": true
+        }
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo": "shopify:\/\/shop_images\/hello-tshirt-logo_d3560eba-d788-43d0-a054-3207507a6eb9.png",
+          "logo_max_width": "150",
+          "show_announcement": false,
+          "home_page_only": true,
+          "announcement_text": "Announce something here",
+          "announcement_link": "",
+          "tagline": "<p>Automated greeting technology with basic tees<\/p>"
+        }
+      },
+      "sidebar": {
+        "type": "sidebar",
+        "settings": {
+          "main_menu_link_list": "main-menu"
+        }
+      },
+      "product-template-custom-print": {
+        "type": "product-template-custom-print",
+        "settings": {
+          "product_quantity_enable": false,
+          "vendor_show": false,
+          "social_sharing_products": true,
+          "product_description_position": "below",
+          "show_extra_tab": false,
+          "extra_tab_content": "",
+          "product_image_zoom_type": "lightbox",
+          "enable_payment_button": true,
+          "add_to_cart_width": "regular"
+        }
+      },
+      "product-recommendations": {
+        "type": "product-recommendations",
+        "settings": {
+          "show_product_recommendations": true,
+          "heading": "You may also like",
+          "vendor_show": false
+        }
+      },
+      "product-template": {
+        "type": "product-template",
+        "settings": {
+          "product_quantity_enable": false,
+          "vendor_show": false,
+          "social_sharing_products": true,
+          "product_description_position": "below",
+          "show_extra_tab": false,
+          "extra_tab_content": "",
+          "product_image_zoom_type": "lightbox",
+          "enable_payment_button": true,
+          "add_to_cart_width": "regular"
+        }
       }
     },
     "content_for_index": [
