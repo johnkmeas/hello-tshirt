@@ -41,9 +41,6 @@ Use the assign statement outside of this comment block at the top of your templa
           <b>Custom Printing</b>
         </th>
         <th>
-          <b>Add Item</b>
-        </th>
-        <th>
           <b>Summary</b>
         </th>
       </thead>
@@ -52,7 +49,7 @@ Use the assign statement outside of this comment block at the top of your templa
           {% if product.available %}
             {% form 'product', product, class:'product-form' %}
               <tr class="{% cycle 'pure-table-odd', '' %}" data="product" data-product-id="{{ product.id }}" data-line-item="{{ forloop.index }}">
-                <td>
+                <td class="text-center">
                   {{ line_item.key }}
                   <a class="product-title" href="{{ product.url | collection }}">
                     {{ product.title }}
@@ -78,6 +75,10 @@ Use the assign statement outside of this comment block at the top of your templa
                       {% endif %}
                       {% endfor %}
                     </select>
+                  </label>
+                  <label for="quantity">Quantity
+                    <input name="quantity" class="quantity field" min="0" type="text" value="0" tabindex="1" />
+                    <button data-add-item>Add</button>
                   </label>
                 </td>
                 <td>
@@ -110,12 +111,6 @@ Use the assign statement outside of this comment block at the top of your templa
                   {% endif %}
                 </td>
                 <td>
-                  <label for="quantity">Quantity
-                    <input name="quantity" class="quantity field" min="0" type="text" value="0" tabindex="1" />
-                    <button data-add-item>Add</button>
-                  </label>
-                </td>
-                <td>
                   <div data-bind="current-cart"></div>
                 </td>
               </tr>
@@ -135,78 +130,6 @@ Use the assign statement outside of this comment block at the top of your templa
 </form>
 
 {% endpaginate %}
-
-<!-- A few style tweaks to improve user experience -->
-<style>
-
-  label {
-    display: block;
-  }
-
-  input,
-  select,
-  textarea {
-    border: 1px solid #d1cfcf;
-    margin-bottom: 5px;
-  }
-
-  button {
-    background-color: #eb9f40;
-    border: none;
-    color:white;
-    border-radius: 0;
-    max-width: 100%;
-    padding: 8px 24px;
-  }
-
-  button:hover {
-    background: #45bdeb;
-  }
-
-  .display-none {
-    display: none;
-  }
-  
-  .button-group {
-    padding-top: 25px;
-  }
-
-  .button-group button {
-    margin: 4px 0;
-  }
-
-  .product-title {
-    display: block;
-    text-align: center;
-  }
-
-  @media (max-width: 639px) {
-    th {
-      display: none;
-    }
-
-    td {
-      display: block;
-    }
-
-    select[name="variant"] {
-      display: block;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-    }
-  }
-
-  @media (min-width: 640px) {
-    .order-form {
-      overflow: scroll;
-    }
-  }
-
-</style>
 
 {% if collection.products_count > 0 %}
   <script>

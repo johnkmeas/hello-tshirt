@@ -1,7 +1,7 @@
 <div class="grid banner-wrapper">
   <div class="grid__item banner slide-up-animation animated">
     {% if section.settings.title != blank %}
-      <h2 class="small--text-center">{{ section.settings.title | escape }}</h2>
+      <h2 class="custom-banner-text">{{ section.settings.title | escape }}</h2>
     {% endif %}
     {% unless section.settings.banner_url == blank %}
       <a href="{{ section.settings.banner_url }}">
