@@ -41,9 +41,6 @@ Use the assign statement outside of this comment block at the top of your templa
           <b>Custom Printing</b>
         </th>
         <th>
-          <b>Add Item</b>
-        </th>
-        <th>
           <b>Summary</b>
         </th>
       </thead>
@@ -52,7 +49,7 @@ Use the assign statement outside of this comment block at the top of your templa
           {% if product.available %}
             {% form 'product', product, class:'product-form' %}
               <tr class="{% cycle 'pure-table-odd', '' %}" data="product" data-product-id="{{ product.id }}" data-line-item="{{ forloop.index }}">
-                <td>
+                <td class="text-center">
                   {{ line_item.key }}
                   <a class="product-title" href="{{ product.url | collection }}">
                     {{ product.title }}
@@ -78,6 +75,10 @@ Use the assign statement outside of this comment block at the top of your templa
                       {% endif %}
                       {% endfor %}
                     </select>
+                  </label>
+                  <label for="quantity">Quantity
+                    <input name="quantity" class="quantity field" min="0" type="text" value="0" tabindex="1" />
+                    <button data-add-item>Add</button>
                   </label>
                 </td>
                 <td>
@@ -108,12 +109,6 @@ Use the assign statement outside of this comment block at the top of your templa
                       </label>
                     </div>
                   {% endif %}
-                </td>
-                <td>
-                  <label for="quantity">Quantity
-                    <input name="quantity" class="quantity field" min="0" type="text" value="0" tabindex="1" />
-                    <button data-add-item>Add</button>
-                  </label>
                 </td>
                 <td>
                   <div data-bind="current-cart"></div>
